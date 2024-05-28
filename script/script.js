@@ -25,24 +25,20 @@ while (mineIndexSet.size < 10) {
 }
 
 for (const index of mineIndexSet) {
+    const adjIndex = [-9, -1, 7, 8, -8, -7, 1, 9];
     tileObjectArr[index].mine = true;
-}
-
-const adjIndex = [-9, -1, 7, 8, -8, -7, 1, 9];
-for (let i=0; i<tileObjectArr.length; i++) {
+    tileObjectArr[index].adjMines = -1;
     let start=0;
     let end=adjIndex.length;
-    if (i%8 == 0) {
+    if (index%8 == 0) {
         start=3;
     }
-    else if (i%8 ==7) {
+    else if (index%8 ==7) {
         end=adjIndex.length-3;
     }
     for (let j=start; j<end; j++) {
-        if (isValid(i+adjIndex[j], tileObjectArr)) {
-            if (tileObjectArr[i+adjIndex[j]].mine == true) {
-                tileObjectArr[i].adjMines++;
-            }
+        if (isValid(index+adjIndex[j], tileObjectArr)) {
+            tileObjectArr[index+adjIndex[j]].adjMines++;
         }
     }
 }
