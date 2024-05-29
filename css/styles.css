@@ -9,6 +9,8 @@ div.tile {
     width: 50px;
     border: 1px solid black;
     float: left;
+    text-align: center;
+    line-height: 50px;
 }
 
 div.tile:hover {
