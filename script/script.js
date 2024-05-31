@@ -23,6 +23,7 @@ for (let i = 0; i < tileArr.length; i++) {
     tileMap.set(tileArr[i].id, tileObjectArr[i]);
     tileIdMap.set(tileArr[i].id, i);
     tileIndexMap.set(i, tileArr[i].id);
+    tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
 }
 
 const mineIndexSet = new Set();
@@ -56,14 +57,14 @@ function isValid(index, arr) {
 }
 
 function uncoverTile(tile) {
-    if (tileMap.get(tile.id).mine == true && tile.id != null) {
+    if (tileMap.get(tile.id).mine == true && tile.id != "") {
         tile.innerHTML = "Mine";
     }
-    else if (tileMap.get(tile.id).adjMines == 0 && tile.innerHTML == "") {
+    else if (tileMap.get(tile.id).adjMines == 0 && tile.innerHTML == "" ) {
         tile.innerHTML = "0";
         uncoverAdjTiles(tile.id);
     }
-    else {
+    else if (tile.innerHTML != "F") {
         tile.innerHTML = tileMap.get(tile.id).adjMines;
     }  
 }
@@ -79,10 +80,19 @@ function uncoverAdjTiles(tileId) {
         end=adjIndex.length-3;
     }
     for (let j=start; j<end; j++) {
-        if (isValid(tileIndex+adjIndex[j], tileObjectArr) ) {
+        if (isValid(tileIndex+adjIndex[j], tileObjectArr) && tileArr[tileIndex+adjIndex[j]].innerHTML != "F") {
             let delta = adjIndex[j];
             let relAdjIndex = tileIndex+delta;
             uncoverTile(document.getElementById(tileIndexMap.get(relAdjIndex)));
         }
+    }
+}
+
+function placeFlag(element) {
+    if (element.innerHTML == "") {
+        element.innerHTML = "F";
+    }
+    else if (element.innerHTML == "F") {
+        element.innerHTML = "";
     }
 }
