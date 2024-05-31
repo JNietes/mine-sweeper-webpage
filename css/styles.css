@@ -6,15 +6,16 @@ body {
 div.tile {
     background-color:bisque;
     height: 50px;
+    line-height: 50px;
     width: 50px;
     border: 1px solid black;
     float: left;
     text-align: center;
-    line-height: 50px;
+    font-weight: bold;
 }
 
 div.tile:hover {
-    background-color: #ffe4c47a;
+    background-color: #ffe4c4b7;
 }
 
 div.nextRow {

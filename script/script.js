@@ -1,9 +1,10 @@
 
 class tileObject {
-    constructor(id, index, mine, adjMines) {
+    constructor(id, index, mine, covered, adjMines) {
         this.id = id;
         this.index = index;
         this.mine = mine;
+        this.covered = covered;
         this.adjMines = adjMines;
     }
 }
@@ -19,10 +20,12 @@ const tileIndexMap = new Map();
 const tileIdMap = new Map();
 
 for (let i = 0; i < tileArr.length; i++) {
-    tileObjectArr[i] = new tileObject(tileArr[i].id, i, false, 0);
+    tileObjectArr[i] = new tileObject(tileArr[i].id, i, false, true, 0);
     tileMap.set(tileArr[i].id, tileObjectArr[i]);
     tileIdMap.set(tileArr[i].id, i);
     tileIndexMap.set(i, tileArr[i].id);
+    tileArr[i].addEventListener("click", function() { uncoverTile(this); });
+    tileArr[i].addEventListener("contextmenu", function () { placeFlag(this) });
     tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
 }
 
@@ -57,15 +60,43 @@ function isValid(index, arr) {
 }
 
 function uncoverTile(tile) {
-    if (tileMap.get(tile.id).mine == true && tile.id != "") {
+    if (tileMap.get(tile.id).mine == true && tile.id != "" && tileMap.get(tile.id).covered == true) {
         tile.innerHTML = "Mine";
     }
-    else if (tileMap.get(tile.id).adjMines == 0 && tile.innerHTML == "" ) {
-        tile.innerHTML = "0";
+    else if (tileMap.get(tile.id).adjMines == 0 && tileMap.get(tile.id).covered == true) {
+        tile.style.backgroundColor = "floralwhite";
+        tileMap.get(tile.id).covered = false;
         uncoverAdjTiles(tile.id);
     }
     else if (tile.innerHTML != "F") {
-        tile.innerHTML = tileMap.get(tile.id).adjMines;
+        if (tileMap.get(tile.id).adjMines != 0) {
+            tile.innerHTML = tileMap.get(tile.id).adjMines;
+            tile.style.backgroundColor = "floralwhite";
+            tileMap.get(tile.id).covered = false;
+            switch(tileMap.get(tile.id).adjMines) {
+                case 1:
+                    tile.style.color = "blue";
+                    break;
+                case 2:
+                    tile.style.color = "green";
+                    break;
+                case 3:
+                    tile.style.color = "red";
+                    break;
+                case 4:
+                    tile.style.color = "darkblue";
+                    break;
+                case 5:
+                    tile.style.color = "crimson";
+                    break;
+                case 6:
+                    tile.style.color = "cyan";
+                    break;
+                case 8:
+                    tile.style.color = "grey";
+                    break;
+            }
+        }
     }  
 }
 
@@ -88,11 +119,13 @@ function uncoverAdjTiles(tileId) {
     }
 }
 
-function placeFlag(element) {
-    if (element.innerHTML == "") {
-        element.innerHTML = "F";
+function placeFlag(tile) {
+    if (tileMap.get(tile.id).covered == true) {
+        tile.innerHTML = "F";
+        tileMap.get(tile.id).covered = false;
     }
-    else if (element.innerHTML == "F") {
-        element.innerHTML = "";
+    else if (tile.innerHTML == "F") {
+        tile.innerHTML = "";
+        tileMap.get(tile.id).covered = true;
     }
 }
