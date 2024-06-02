@@ -24,8 +24,8 @@ for (let i = 0; i < tileArr.length; i++) {
     tileMap.set(tileArr[i].id, tileObjectArr[i]);
     tileIdMap.set(tileArr[i].id, i);
     tileIndexMap.set(i, tileArr[i].id);
-    tileArr[i].addEventListener("click", function() { uncoverTile(this); });
-    tileArr[i].addEventListener("contextmenu", function () { placeFlag(this) });
+    tileArr[i].addEventListener("click", uncoverTile);
+    tileArr[i].addEventListener("contextmenu", placeFlag);
     tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
 }
 
@@ -59,49 +59,38 @@ function isValid(index, arr) {
         return false;
 }
 
-function uncoverTile(tile) {
+function uncoverTile() {
+    let tile = this;
     if (tileMap.get(tile.id).mine == true && tile.id != "" && tileMap.get(tile.id).covered == true) {
-        tile.innerHTML = "Mine";
-    }
-    else if (tileMap.get(tile.id).adjMines == 0 && tileMap.get(tile.id).covered == true) {
-        tile.style.backgroundColor = "floralwhite";
         tileMap.get(tile.id).covered = false;
-        uncoverAdjTiles(tile.id);
+        tile.innerHTML = "mine";
+        document.getElementById("smile").innerHTML = "X(";
+
+        mineIndexSet.forEach(function (index) {
+            tileArr[parseInt(index, 10)].innerHTML = "mine";
+        });
+
+        for (let i=0; i<tileArr.length; i++) {
+            tileArr[i].removeEventListener("click", uncoverTile);
+            tileArr[i].removeEventListener("contextmenu", placeFlag);
+        } 
+    }
+    else if (tileMap.get(tile.id).adjMines == 0 && tile.id != "" && tileMap.get(tile.id).covered == true) {
+        uncoverAdjTiles(tileIdMap.get(tile.id));
     }
     else if (tile.innerHTML != "F") {
         if (tileMap.get(tile.id).adjMines != 0) {
             tile.innerHTML = tileMap.get(tile.id).adjMines;
             tile.style.backgroundColor = "floralwhite";
             tileMap.get(tile.id).covered = false;
-            switch(tileMap.get(tile.id).adjMines) {
-                case 1:
-                    tile.style.color = "blue";
-                    break;
-                case 2:
-                    tile.style.color = "green";
-                    break;
-                case 3:
-                    tile.style.color = "red";
-                    break;
-                case 4:
-                    tile.style.color = "darkblue";
-                    break;
-                case 5:
-                    tile.style.color = "crimson";
-                    break;
-                case 6:
-                    tile.style.color = "cyan";
-                    break;
-                case 8:
-                    tile.style.color = "grey";
-                    break;
-            }
+            assignColor(tile);
         }
     }  
 }
 
-function uncoverAdjTiles(tileId) {
-    let tileIndex = tileIdMap.get(tileId);
+function uncoverAdjTiles(tileIndex) {
+    tileObjectArr[tileIndex].covered = false;
+    tileArr[tileIndex].style.backgroundColor = "floralwhite";
     let start=0;
     let end=adjIndex.length;
     if (tileIndex%8 == 0) {
@@ -111,21 +100,62 @@ function uncoverAdjTiles(tileId) {
         end=adjIndex.length-3;
     }
     for (let j=start; j<end; j++) {
-        if (isValid(tileIndex+adjIndex[j], tileObjectArr) && tileArr[tileIndex+adjIndex[j]].innerHTML != "F") {
-            let delta = adjIndex[j];
-            let relAdjIndex = tileIndex+delta;
-            uncoverTile(document.getElementById(tileIndexMap.get(relAdjIndex)));
+        let delta = adjIndex[j];
+        let relAdjIndex = tileIndex+delta;
+        if (isValid(tileIndex+adjIndex[j], tileObjectArr) && tileArr[tileIndex+adjIndex[j]].innerHTML != "F" && tileObjectArr[relAdjIndex].covered == true) {
+            if (tileObjectArr[relAdjIndex].covered == true && tileObjectArr[relAdjIndex].adjMines != 0) { // Base case
+                tileArr[relAdjIndex].innerHTML = tileObjectArr[relAdjIndex].adjMines;
+                tileArr[relAdjIndex].style.backgroundColor = "floralwhite";
+                assignColor(tileArr[relAdjIndex]);
+            }
+            else {
+                uncoverAdjTiles(relAdjIndex);
+            }
+            
         }
+        
     }
 }
 
-function placeFlag(tile) {
+function placeFlag() {
+    let tile = this;
     if (tileMap.get(tile.id).covered == true) {
         tile.innerHTML = "F";
         tileMap.get(tile.id).covered = false;
+        document.getElementById("flags").innerHTML--;
     }
     else if (tile.innerHTML == "F") {
         tile.innerHTML = "";
         tileMap.get(tile.id).covered = true;
+        document.getElementById("flags").innerHTML++;
+        
+    }
+}
+
+function assignColor(tile) {
+    switch (tile.innerHTML) {
+        case "0":
+            break;
+        case "1":
+            tile.style.color = "blue";
+            break;
+        case "2":
+            tile.style.color = "green";
+            break;
+        case "3":
+            tile.style.color = "red";
+            break;
+        case "4":
+            tile.style.color = "darkblue";
+            break;
+        case "5":
+            tile.style.color = "crimson";
+            break;
+        case "6":
+            tile.style.color = "cyan";
+            break;
+        case "8":
+            tile.style.color = "grey";
+            break;
     }
 }
