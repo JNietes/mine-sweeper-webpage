@@ -19,7 +19,7 @@ for (let i = 0; i < tileArr.length; i++) {
     tileArr[i].addEventListener("contextmenu", placeFlag);
     tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
 }
-    
+
 const mineIndexSet = new Set();
 while (mineIndexSet.size < 10) {
     mineIndexSet.add(parseInt((Math.random() * 64), 10));
@@ -54,8 +54,10 @@ function selectedDiv() {
     uncoverTile(this);
 }
 
+let tilesUncovered = 0;
 function uncoverTile(tile) {
     if (tileMap.get(tile).covered == true) { 
+        tilesUncovered++;
         tile.style.backgroundColor = "floralwhite";
         tileMap.get(tile).covered = false;
         if (tileMap.get(tile).mine == true) { // Game Over
@@ -90,6 +92,9 @@ function uncoverTile(tile) {
             tile.innerHTML = tileMap.get(tile).adjMines;
             assignColor(tile);
         }
+        if (tilesUncovered == 54) {
+            displayWinScreen();
+        }
     }
 }
 
@@ -113,12 +118,16 @@ function placeFlag() {
         }
     }
     if (minesFlagged == 10) {
-        document.getElementById("smile").innerHTML = ":D";
-        for (let i=0; i<tileArr.length; i++) {
-            tileArr[i].removeEventListener("click", selectedDiv);
-            tileArr[i].removeEventListener("contextmenu", placeFlag);
-        } 
+        displayWinScreen();
     }
+}
+
+function displayWinScreen() {
+    document.getElementById("smile").innerHTML = ":D";
+    for (let i=0; i<tileArr.length; i++) {
+        tileArr[i].removeEventListener("click", selectedDiv);
+        tileArr[i].removeEventListener("contextmenu", placeFlag);
+    } 
 }
 
 function assignColor(tile) {
