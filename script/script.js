@@ -40,7 +40,6 @@ for (const index of mineIndexSet) {
             tileMap.get(tileArr[index+adjDeltas[j]]).adjMines++;
         }
     }
-    
 }
 
 function inArray(index, arr) {
@@ -117,7 +116,7 @@ function placeFlag() {
             minesFlagged--;
         }
     }
-    if (minesFlagged == 10) {
+    if (minesFlagged == 10 && tilesUncovered == 54) {
         displayWinScreen();
     }
 }
