@@ -104,6 +104,7 @@ function uncoverAdjTiles(tileIndex) {
         let relAdjIndex = tileIndex+delta;
         if (isValid(tileIndex+adjIndex[j], tileObjectArr) && tileArr[tileIndex+adjIndex[j]].innerHTML != "F" && tileObjectArr[relAdjIndex].covered == true) {
             if (tileObjectArr[relAdjIndex].covered == true && tileObjectArr[relAdjIndex].adjMines != 0) { // Base case
+                tileObjectArr[relAdjIndex].covered = false;
                 tileArr[relAdjIndex].innerHTML = tileObjectArr[relAdjIndex].adjMines;
                 tileArr[relAdjIndex].style.backgroundColor = "floralwhite";
                 assignColor(tileArr[relAdjIndex]);
@@ -117,18 +118,31 @@ function uncoverAdjTiles(tileIndex) {
     }
 }
 
+let minesFlagged = 0;
 function placeFlag() {
     let tile = this;
     if (tileMap.get(tile.id).covered == true) {
         tile.innerHTML = "F";
         tileMap.get(tile.id).covered = false;
         document.getElementById("flags").innerHTML--;
+        if (tileMap.get(tile.id).mine = true) {
+            minesFlagged++;
+        }
     }
     else if (tile.innerHTML == "F") {
         tile.innerHTML = "";
         tileMap.get(tile.id).covered = true;
         document.getElementById("flags").innerHTML++;
-        
+        if (tileMap.get(tile.id).mine = true) {
+            minesFlagged--;
+        }
+    }
+    if (minesFlagged == 10) {
+        document.getElementById("smile").innerHTML = ":D";
+        for (let i=0; i<tileArr.length; i++) {
+            tileArr[i].removeEventListener("click", uncoverTile);
+            tileArr[i].removeEventListener("contextmenu", placeFlag);
+        } 
     }
 }
 
