@@ -20,28 +20,6 @@ for (let i = 0; i < tileArr.length; i++) {
     tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
 }
 
-const mineIndexSet = new Set();
-while (mineIndexSet.size < 10) {
-    mineIndexSet.add(parseInt((Math.random() * 64), 10));
-}
-
-for (const index of mineIndexSet) {
-    tileMap.get(tileArr[index]).mine = true;
-    let start=0;
-    let end=adjDeltas.length;
-    if (index%8 == 0) {
-        start=3;
-    }
-    else if (index%8 ==7) {
-        end=adjDeltas.length-3;
-    }
-    for (let j=start; j<end; j++) {
-        if (inArray(index+adjDeltas[j], tileArr)) {
-            tileMap.get(tileArr[index+adjDeltas[j]]).adjMines++;
-        }
-    }
-}
-
 function inArray(index, arr) {
     if (index >= 0 && index < arr.length)
         return true;
@@ -49,12 +27,46 @@ function inArray(index, arr) {
         return false;
 }
 
+function newMineIndexes() {
+    let mineIndexSet = new Set();
+    while (mineIndexSet.size < 10) {
+        mineIndexSet.add(parseInt((Math.random() * 64), 10));
+    }
+    return mineIndexSet;
+}
+
+function createClues(setOfIndexes) {
+    for (const index of setOfIndexes) {
+        tileMap.get(tileArr[index]).mine = true;
+        let start=0;
+        let end=adjDeltas.length;
+        if (index%8 == 0) {
+            start=3;
+        }
+        else if (index%8 ==7) {
+            end=adjDeltas.length-3;
+        }
+        for (let j=start; j<end; j++) {
+            if (inArray(index+adjDeltas[j], tileArr)) {
+                tileMap.get(tileArr[index+adjDeltas[j]]).adjMines++;
+            }
+        }
+    }
+}
+
 function selectedDiv() {
     uncoverTile(this);
 }
 
 let tilesUncovered = 0;
+let mineSet = newMineIndexes();
 function uncoverTile(tile) {
+    if (tilesUncovered == 0) {
+        while (mineSet.has(tileMap.get(tile).index)) {
+            mineSet = newMineIndexes();
+        }
+        createClues(mineSet);
+    }
     if (tileMap.get(tile).covered == true) { 
         tilesUncovered++;
         tile.style.backgroundColor = "floralwhite";
