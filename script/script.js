@@ -87,11 +87,12 @@ function uncoverTile(tile) {
         createClues(mineSet);
     }
     if (tileMap.get(tile).covered == true) { 
-        tilesUncovered++;
+        tilesUncovered++; 
         tile.classList.remove("uncoveredTile");
         tile.style.backgroundColor = "floralwhite";
         tileMap.get(tile).covered = false;
         if (tileMap.get(tile).mine == true) { // Game Over
+            tilesUncovered+=1024; // Prevents winscreen when a mine is clicked when tilesUncovered=totalTile-mines-1
             tileMap.get(tile).covered = false;
             document.getElementById("smile").innerHTML = "X(";
             mineSet.forEach(function (index) {
@@ -123,7 +124,7 @@ function uncoverTile(tile) {
             tile.innerHTML = tileMap.get(tile).adjMines;
             assignColor(tile);
         }
-        if (tilesUncovered == 54) {
+        if (tilesUncovered == 54) { // 54=tiles-mines
             displayWinScreen();
         }
     }
@@ -135,7 +136,8 @@ function placeFlag() {
         tile.innerHTML = "F";
         tileMap.get(tile).covered = false;
         document.getElementById("flags").innerHTML--;
-        if (tileMap.get(tile).mine = true) {
+        let mineAtTile = tileMap.get(tile).mine;
+        if (tileMap.get(tile).mine == true) {
             minesFlagged++;
         }
     }
@@ -143,7 +145,7 @@ function placeFlag() {
         tile.innerHTML = "";
         tileMap.get(tile).covered = true;
         document.getElementById("flags").innerHTML++;
-        if (tileMap.get(tile).mine = true) {
+        if (tileMap.get(tile).mine == true) {
             minesFlagged--;
         }
     }
