@@ -6,6 +6,11 @@ body {
     padding: auto;
     }
 
+.headings {
+    display: flex;
+    justify-content: space-between;
+}
+
 h1#smile {
     cursor: pointer;
 }

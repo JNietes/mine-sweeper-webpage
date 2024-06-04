@@ -15,6 +15,7 @@ const tileMap = new Map(); // {div.tile#id: TileObject}
 let tilesUncovered = 0;
 let minesFlagged = 0;
 let mineSet = newMineIndexes();
+let timer = setInterval(countTime, 1000);
 
 document.getElementById("smile").addEventListener("click", startNewGame);
 
@@ -28,11 +29,13 @@ function startNewGame() {
         tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
         document.getElementById("smile").innerHTML = ":)";
         document.getElementById("flags").innerHTML = "10";
+        document.getElementById("time").innerHTML = 0;
         for (let i=0; i<tileArr.length; i++) {
             tileArr[i].innerHTML = null;
             tileArr[i].style.color = "black";
             tileArr[i].classList.add("uncoveredTile");
             tileArr[i].style.backgroundColor = "bisque";
+            clearInterval(timer);
         }
         mineSet = newMineIndexes();
         tilesUncovered = 0
@@ -45,6 +48,10 @@ function inArray(index, arr) {
         return true;
     else
         return false;
+}
+
+function countTime() {
+    document.getElementById("time").innerHTML++;
 }
 
 function newMineIndexes() {
@@ -78,13 +85,13 @@ function selectedDiv() {
     uncoverTile(this);
 }
 
-
 function uncoverTile(tile) {
     if (tilesUncovered == 0) {
         while (mineSet.has(tileMap.get(tile).index)) {
             mineSet = newMineIndexes();
         }
         createClues(mineSet);
+        timer = setInterval(countTime, 1000);
     }
     if (tileMap.get(tile).covered == true) { 
         tilesUncovered++; 
@@ -94,6 +101,7 @@ function uncoverTile(tile) {
         if (tileMap.get(tile).mine == true) { // Game Over
             tilesUncovered+=1024; // Prevents winscreen when a mine is clicked when tilesUncovered=totalTile-mines-1
             tileMap.get(tile).covered = false;
+            clearInterval(timer);
             document.getElementById("smile").innerHTML = "X(";
             mineSet.forEach(function (index) {
                 tileArr[parseInt(index, 10)].innerHTML = "mine";
@@ -156,6 +164,7 @@ function placeFlag() {
 
 function displayWinScreen() {
     document.getElementById("smile").innerHTML = ":D";
+    clearInterval(timer);
     for (let i=0; i<tileArr.length; i++) {
         tileArr[i].removeEventListener("click", selectedDiv);
         tileArr[i].removeEventListener("contextmenu", placeFlag);
