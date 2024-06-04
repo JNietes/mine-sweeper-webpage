@@ -1,11 +1,16 @@
 
 body {
+    background-color: whitesmoke;
     max-width: max-content;
-    margin: auto;
+    margin: 50px auto;
+    padding: auto;
     }
 
+h1#smile {
+    cursor: pointer;
+}
+
 div.tile {
-    background-color:bisque;
     height: 50px;
     line-height: 50px;
     width: 50px;
@@ -17,6 +22,10 @@ div.tile {
 
 div.tile:hover {
     background-color: #ffe4c4b7;
+}
+
+div.uncoveredTile {
+    cursor: pointer;
 }
 
 div.nextRow {

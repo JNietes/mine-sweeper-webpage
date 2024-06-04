@@ -9,15 +9,35 @@ class TileObject {
     }
 }
 
-const adjDeltas = [-9, -1, 7, 8, -8, -7, 1, 9]; // [-width-1, -1, width-1, width, -width, -width+1, +1, width+1]
 const tileArr = Array.from(document.querySelectorAll(".tile"))
+const adjDeltas = [-9, -1, 7, 8, -8, -7, 1, 9]; // [-width-1, -1, width-1, width, -width, -width+1, +1, width+1]
 const tileMap = new Map(); // {div.tile#id: TileObject}
+let tilesUncovered = 0;
+let minesFlagged = 0;
+let mineSet = newMineIndexes();
 
-for (let i = 0; i < tileArr.length; i++) {
-    tileMap.set(tileArr[i], new TileObject(tileArr[i].id, false, i, true, 0));
-    tileArr[i].addEventListener("click", selectedDiv);
-    tileArr[i].addEventListener("contextmenu", placeFlag);
-    tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
+document.getElementById("smile").addEventListener("click", startNewGame);
+
+startNewGame();
+
+function startNewGame() {
+    for (let i = 0; i < tileArr.length; i++) {
+        tileMap.set(tileArr[i], new TileObject(tileArr[i].id, false, i, true, 0));
+        tileArr[i].addEventListener("click", selectedDiv);
+        tileArr[i].addEventListener("contextmenu", placeFlag);
+        tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
+        document.getElementById("smile").innerHTML = ":)";
+        document.getElementById("flags").innerHTML = "10";
+        for (let i=0; i<tileArr.length; i++) {
+            tileArr[i].innerHTML = null;
+            tileArr[i].style.color = "black";
+            tileArr[i].classList.add("uncoveredTile");
+            tileArr[i].style.backgroundColor = "bisque";
+        }
+        mineSet = newMineIndexes();
+        tilesUncovered = 0
+        minesFlagged = 0;
+    }
 }
 
 function inArray(index, arr) {
@@ -58,8 +78,7 @@ function selectedDiv() {
     uncoverTile(this);
 }
 
-let tilesUncovered = 0;
-let mineSet = newMineIndexes();
+
 function uncoverTile(tile) {
     if (tilesUncovered == 0) {
         while (mineSet.has(tileMap.get(tile).index)) {
@@ -69,6 +88,7 @@ function uncoverTile(tile) {
     }
     if (tileMap.get(tile).covered == true) { 
         tilesUncovered++;
+        tile.classList.remove("uncoveredTile");
         tile.style.backgroundColor = "floralwhite";
         tileMap.get(tile).covered = false;
         if (tileMap.get(tile).mine == true) { // Game Over
@@ -109,7 +129,6 @@ function uncoverTile(tile) {
     }
 }
 
-let minesFlagged = 0;
 function placeFlag() {
     let tile = this;
     if (tileMap.get(tile).covered == true) {
