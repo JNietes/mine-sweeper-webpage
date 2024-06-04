@@ -74,7 +74,7 @@ function uncoverTile(tile) {
         if (tileMap.get(tile).mine == true) { // Game Over
             tileMap.get(tile).covered = false;
             document.getElementById("smile").innerHTML = "X(";
-            mineIndexSet.forEach(function (index) {
+            mineSet.forEach(function (index) {
                 tileArr[parseInt(index, 10)].innerHTML = "mine";
             });
             for (let i=0; i<tileArr.length; i++) {
