@@ -1,7 +1,8 @@
 
 class TileObject {
-    constructor(id, mine, index, covered, adjMines) {
+    constructor(id, mine, flag, index, covered, adjMines) {
         this.id = id;
+        this.flag = flag;
         this.mine = mine;
         this.index = index;
         this.covered = covered;
@@ -10,12 +11,13 @@ class TileObject {
 }
 
 const tileArr = Array.from(document.querySelectorAll(".tile"))
-const adjDeltas = [-9, -1, 7, 8, -8, -7, 1, 9]; // [-width-1, -1, width-1, width, -width, -width+1, +1, width+1]
+const adjDeltas = [-9, -1, 7, -8, 8, -7, 1, 9]; // [-width-1, -1, width-1, width, -width, -width+1, +1, width+1]
 const tileMap = new Map(); // {div.tile#id: TileObject}
 let tilesUncovered = 0;
 let minesFlagged = 0;
 let mineSet = newMineIndexes();
 let timer = setInterval(countTime, 1000);
+let width = 8;
 
 document.getElementById("smile").addEventListener("click", startNewGame);
 
@@ -23,7 +25,7 @@ startNewGame();
 
 function startNewGame() {
     for (let i = 0; i < tileArr.length; i++) {
-        tileMap.set(tileArr[i], new TileObject(tileArr[i].id, false, i, true, 0));
+        tileMap.set(tileArr[i], new TileObject(tileArr[i].id, false, false, i, true, 0));
         tileArr[i].addEventListener("click", selectedDiv);
         tileArr[i].addEventListener("contextmenu", placeFlag);
         tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
@@ -65,20 +67,29 @@ function newMineIndexes() {
 function createClues(setOfIndexes) {
     for (const index of setOfIndexes) {
         tileMap.get(tileArr[index]).mine = true;
-        let start=0;
-        let end=adjDeltas.length;
-        if (index%8 == 0) {
-            start=3;
-        }
-        else if (index%8 ==7) {
-            end=adjDeltas.length-3;
-        }
-        for (let j=start; j<end; j++) {
-            if (inArray(index+adjDeltas[j], tileArr)) {
-                tileMap.get(tileArr[index+adjDeltas[j]]).adjMines++;
-            }
+        let relAdjDeltas = getRelAdjIndexes(adjDeltas, index, width);
+        for (let j=0; j<relAdjDeltas.length; j++) {
+            tileMap.get(tileArr[relAdjDeltas[j]]).adjMines++;
         }
     }
+}
+
+function getRelAdjIndexes(adjDeltasArr, index, width) {
+    let relAdjIndexes = [];
+    let start=0;
+    let end=width;
+    if (index%width == 0) {
+        start=3;
+    }
+    else if (index%width == width-1) {
+        end = width-3;
+    }
+    for (let i=start; i<end; i++) {
+        if (inArray(adjDeltasArr[i] + index, tileArr)) {
+            relAdjIndexes.push(adjDeltasArr[i] + index);
+        }    
+    }
+    return relAdjIndexes;
 }
 
 function selectedDiv() {
@@ -112,19 +123,11 @@ function uncoverTile(tile) {
             } 
         }
         else if (tileMap.get(tile).adjMines == 0) {
-            let start=0;
-            let end=adjDeltas.length;
             let tileIndex = tileMap.get(tile).index;
-            if (tileIndex%8 == 0) {
-                start=3;
-            }
-            else if (tileIndex%8 == 7) {
-                end=adjDeltas.length-3;
-            }
-            for (let j=start; j<end; j++) {
-                let relAdjIndex = tileIndex+adjDeltas[j];
-                if (inArray(relAdjIndex, tileArr) && tileMap.get(tileArr[relAdjIndex]).covered == true) {
-                    uncoverTile(tileArr[relAdjIndex]);
+            let relAdjIndexes = getRelAdjIndexes(adjDeltas, tileIndex, width);
+            for (let j=0; j<relAdjIndexes.length; j++) {
+                if (tileMap.get(tileArr[relAdjIndexes[j]]).covered == true) {
+                    uncoverTile(tileArr[relAdjIndexes[j]]);
                 }
             }
         }
@@ -136,12 +139,30 @@ function uncoverTile(tile) {
             displayWinScreen();
         }
     }
+    else { // Chording
+        let adjFlags = 0;
+        let relAdjIndexes = getRelAdjIndexes(adjDeltas, tileMap.get(tile).index, width);
+        for (let i=0; i<relAdjIndexes.length; i++) {
+            if (tileMap.get(tileArr[relAdjIndexes[i]]).flag == true) {
+                adjFlags++;
+            }
+        }
+        if (adjFlags == tileMap.get(tile).adjMines) {
+            let relAdjIndexes = getRelAdjIndexes(adjDeltas, tileMap.get(tile).index, width);
+            for (let j=0; j<relAdjIndexes.length; j++) {
+                if (tileMap.get(tileArr[relAdjIndexes[j]]).covered == true) {
+                    uncoverTile(tileArr[relAdjIndexes[j]]);
+                }
+            }
+        }
+    }
 }
 
 function placeFlag() {
     let tile = this;
     if (tileMap.get(tile).covered == true) {
         tile.innerHTML = "F";
+        tileMap.get(tile).flag = true;
         tileMap.get(tile).covered = false;
         document.getElementById("flags").innerHTML--;
         let mineAtTile = tileMap.get(tile).mine;
@@ -149,8 +170,9 @@ function placeFlag() {
             minesFlagged++;
         }
     }
-    else if (tile.innerHTML == "F") {
+    else if (tileMap.get(tile).flag == true) {
         tile.innerHTML = "";
+        tileMap.get(tile).flag = false;
         tileMap.get(tile).covered = true;
         document.getElementById("flags").innerHTML++;
         if (tileMap.get(tile).mine == true) {
