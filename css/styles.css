@@ -23,6 +23,7 @@ div.tile {
     float: left;
     text-align: center;
     font-weight: bold;
+    background-color: bisque;
 }
 
 div.tile:hover {

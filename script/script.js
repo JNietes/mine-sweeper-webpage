@@ -10,18 +10,22 @@ class TileObject {
     }
 }
 
+let height = 8;
+let width = 8;
+let mines = 10;
+createBoard(width, height);
+
 const tileArr = Array.from(document.querySelectorAll(".tile"))
-const adjDeltas = [-9, -1, 7, -8, 8, -7, 1, 9]; // [-width-1, -1, width-1, width, -width, -width+1, +1, width+1]
+const adjDeltas = [-width-1, -1, width-1, width, -width, -width+1, +1, width+1];
 const tileMap = new Map(); // {div.tile#id: TileObject}
 let tilesUncovered = 0;
 let minesFlagged = 0;
 let mineSet = newMineIndexes();
 let timer = setInterval(countTime, 1000);
-let width = 8;
-
-document.getElementById("smile").addEventListener("click", startNewGame);
 
 startNewGame();
+
+document.getElementById("smile").addEventListener("click", startNewGame);
 
 function startNewGame() {
     for (let i = 0; i < tileArr.length; i++) {
@@ -30,19 +34,35 @@ function startNewGame() {
         tileArr[i].addEventListener("contextmenu", placeFlag);
         tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
         document.getElementById("smile").innerHTML = ":)";
-        document.getElementById("flags").innerHTML = "10";
+        document.getElementById("flags").innerHTML = mines;
         document.getElementById("time").innerHTML = 0;
         for (let i=0; i<tileArr.length; i++) {
             tileArr[i].innerHTML = null;
             tileArr[i].style.color = "black";
-            tileArr[i].classList.add("uncoveredTile");
             tileArr[i].style.backgroundColor = "bisque";
-            clearInterval(timer);
         }
+        clearInterval(timer);
         mineSet = newMineIndexes();
         tilesUncovered = 0
         minesFlagged = 0;
     }
+}
+
+function createBoard(width, height) {
+    for (let j=0; j<height; j++) {
+        for (let i=0; i<width; i++) {
+        let id = i.toString() + j.toString();
+        let div = document.createElement("div");
+        div.classList.add("tile");
+        div.classList.add("uncoveredTile");
+        document.body.appendChild(div);
+        }
+        let nextRow = document.createElement("div");
+        nextRow.classList.add("nextRow");
+        document.body.appendChild(nextRow);
+    }
+    
+    
 }
 
 function inArray(index, arr) {
@@ -58,8 +78,8 @@ function countTime() {
 
 function newMineIndexes() {
     let mineIndexSet = new Set();
-    while (mineIndexSet.size < 10) {
-        mineIndexSet.add(parseInt((Math.random() * 64), 10));
+    while (mineIndexSet.size < mines) {
+        mineIndexSet.add(parseInt((Math.random() * (height*width)), 10));
     }
     return mineIndexSet;
 }
@@ -77,12 +97,12 @@ function createClues(setOfIndexes) {
 function getRelAdjIndexes(adjDeltasArr, index, width) {
     let relAdjIndexes = [];
     let start=0;
-    let end=width;
+    let end=8;
     if (index%width == 0) {
         start=3;
     }
     else if (index%width == width-1) {
-        end = width-3;
+        end = 5;
     }
     for (let i=start; i<end; i++) {
         if (inArray(adjDeltasArr[i] + index, tileArr)) {
@@ -135,7 +155,7 @@ function uncoverTile(tile) {
             tile.innerHTML = tileMap.get(tile).adjMines;
             assignColor(tile);
         }
-        if (tilesUncovered == 54) { // 54=tiles-mines
+        if (tilesUncovered == (height*width)-mines) {
             displayWinScreen();
         }
     }
@@ -165,7 +185,6 @@ function placeFlag() {
         tileMap.get(tile).flag = true;
         tileMap.get(tile).covered = false;
         document.getElementById("flags").innerHTML--;
-        let mineAtTile = tileMap.get(tile).mine;
         if (tileMap.get(tile).mine == true) {
             minesFlagged++;
         }
@@ -179,7 +198,7 @@ function placeFlag() {
             minesFlagged--;
         }
     }
-    if (minesFlagged == 10 && tilesUncovered == 54) {
+    if (minesFlagged == mines && tilesUncovered == (height*width)-mines) {
         displayWinScreen();
     }
 }
