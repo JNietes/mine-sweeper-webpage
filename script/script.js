@@ -38,8 +38,8 @@ function startNewGame() {
         document.getElementById("time").innerHTML = 0;
         for (let i=0; i<tileArr.length; i++) {
             tileArr[i].innerHTML = null;
-            tileArr[i].style.color = "black";
             tileArr[i].style.backgroundColor = "bisque";
+            tileArr[i].classList.add("uncoveredTile");
         }
         clearInterval(timer);
         mineSet = newMineIndexes();
@@ -54,7 +54,6 @@ function createBoard(width, height) {
         let id = i.toString() + j.toString();
         let div = document.createElement("div");
         div.classList.add("tile");
-        div.classList.add("uncoveredTile");
         document.body.appendChild(div);
         }
         let nextRow = document.createElement("div");
@@ -135,7 +134,9 @@ function uncoverTile(tile) {
             clearInterval(timer);
             document.getElementById("smile").innerHTML = "X(";
             mineSet.forEach(function (index) {
-                tileArr[parseInt(index, 10)].innerHTML = "mine";
+                if (tileMap.get(tileArr[parseInt(index, 10)]).flag == false) {
+                    addPicture(tileArr[parseInt(index, 10)]);
+                }
             });
             for (let i=0; i<tileArr.length; i++) {
                 tileArr[i].removeEventListener("click", selectedDiv);
@@ -152,8 +153,7 @@ function uncoverTile(tile) {
             }
         }
         else {
-            tile.innerHTML = tileMap.get(tile).adjMines;
-            assignColor(tile);
+            addPicture(tile);
         }
         if (tilesUncovered == (height*width)-mines) {
             displayWinScreen();
@@ -181,18 +181,22 @@ function uncoverTile(tile) {
 function placeFlag() {
     let tile = this;
     if (tileMap.get(tile).covered == true) {
-        tile.innerHTML = "F";
+        let img=document.createElement("img");
+        img.src="images/flag.png";
+        tile.appendChild(img);
         tileMap.get(tile).flag = true;
         tileMap.get(tile).covered = false;
+        tile.classList.remove("uncoveredTile");
         document.getElementById("flags").innerHTML--;
         if (tileMap.get(tile).mine == true) {
             minesFlagged++;
         }
     }
     else if (tileMap.get(tile).flag == true) {
-        tile.innerHTML = "";
+        tile.removeChild(tile.firstChild);
         tileMap.get(tile).flag = false;
         tileMap.get(tile).covered = true;
+        tile.classList.add("uncoveredTile");
         document.getElementById("flags").innerHTML++;
         if (tileMap.get(tile).mine == true) {
             minesFlagged--;
@@ -212,30 +216,39 @@ function displayWinScreen() {
     } 
 }
 
-function assignColor(tile) {
-    switch (tile.innerHTML) {
-        case "0":
-            break;
-        case "1":
-            tile.style.color = "blue";
-            break;
-        case "2":
-            tile.style.color = "green";
-            break;
-        case "3":
-            tile.style.color = "red";
-            break;
-        case "4":
-            tile.style.color = "darkblue";
-            break;
-        case "5":
-            tile.style.color = "crimson";
-            break;
-        case "6":
-            tile.style.color = "cyan";
-            break;
-        case "8":
-            tile.style.color = "grey";
-            break;
+function addPicture(tile) {
+    let img = document.createElement("img");
+    if (tileMap.get(tile).mine == true) {
+        img.src="images/mine.png";
     }
+    else {
+        switch (tileMap.get(tile).adjMines) {
+        case 1:
+            img.src="images/1.png";
+            break;
+        case 2:
+            img.src="images/2.png";
+            break;
+        case 3:
+            img.src="images/3.png";
+            break;
+        case 4:
+            img.src="images/4.png";
+            break;
+        case 5:
+            img.src="images/5.png";
+            break;
+        case 6:
+            img.src="images/6.png";
+            break;
+        case 7:
+            img.src="images/7.png";
+            break;
+        case 8:
+            img.src="images/8.png";
+            break;
+        }
+    }
+    
+    tile.appendChild(img);
 }

@@ -1,6 +1,7 @@
 
 body {
     background-color: whitesmoke;
+    user-select: none;
     max-width: max-content;
     margin: 50px auto;
     padding: auto;
@@ -21,9 +22,9 @@ div.tile {
     width: 50px;
     border: 1px solid black;
     float: left;
-    text-align: center;
-    font-weight: bold;
     background-color: bisque;
+    display: grid;
+    place-items: center;
 }
 
 div.tile:hover {
