@@ -1,25 +1,39 @@
 
 body {
     background-color: whitesmoke;
-    user-select: none;
-    max-width: max-content;
-    margin: 50px auto;
-    padding: auto;
+    display: grid;
     }
 
-.headings {
+#gameBoard {
+    user-select: none;
+    margin: 20px auto;
+    width: fit-content;
+}
+
+#boardMenu {
+    width: 300px;
+    margin: auto;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#topOfBoard {
     display: flex;
     justify-content: space-between;
 }
 
-h1#smile {
+#topOfBoard h1 {
+    margin: 5px 0px;
+}
+
+#smile {
     cursor: pointer;
 }
 
 div.tile {
-    height: 50px;
-    line-height: 50px;
-    width: 50px;
+    height: 40px;
+    line-height: 40px;
+    width: 40px;
     border: 1px solid black;
     float: left;
     background-color: bisque;
