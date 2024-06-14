@@ -10,7 +10,7 @@ class TileObject {
     }
 }
 
-let tileWidth = 40;
+let tileWidth = 30;
 let height = 8;
 let width = 8;
 let mines = 10;
@@ -51,8 +51,8 @@ function createExpertBoard() {
 }
 
 function startNewGame() {
-    document.getElementById("gameBoard").style.width = (width * tileWidth) + (width * 2) + "px";
-    console.log(document.getElementById("gameBoard"));
+    tileWidth = tileArr[0].offsetWidth + tileArr[0].style.marginLeft + tileArr[0].style.marginRight;
+    document.getElementById("gameBoard").style.width = (width * tileWidth) + "px";
     document.getElementById("smile").innerHTML = ":)";
     document.getElementById("flags").innerHTML = mines;
     document.getElementById("time").innerHTML = "0";

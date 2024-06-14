@@ -1,20 +1,62 @@
 
 body {
-    background-color: whitesmoke;
-    display: grid;
+    background-color: black;
+    margin: 0px;
     }
+
+header {
+    height: 40px;
+    background-color: grey;
+    margin-bottom: 25px;
+    padding: 5px;
+}
+
+header h1 {
+    margin: 0px;
+    text-align: center;
+    color: aliceblue;
+}
+
+.container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: fit-content;
+    margin: 0px auto;
+}
+
+aside {
+    border: 3px solid grey;
+    background-color: aliceblue;
+}
 
 #gameBoard {
     user-select: none;
-    margin: 20px auto;
     width: fit-content;
+    border: 3px solid grey;
+    padding: 10px;
+    background-color: aliceblue;
 }
 
 #boardMenu {
-    width: 300px;
     margin: auto;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
+    gap: 5px;
+}
+
+#boardMenu button {
+    transition-duration: 0.4s;
+    cursor: pointer;
+    color: aliceblue;
+    border: none;
+    padding: 5px;
+    background-color: grey;
+}
+
+#boardMenu button:hover {
+    background-color: aliceblue;
+    color: grey;
 }
 
 #topOfBoard {
@@ -31,18 +73,17 @@ body {
 }
 
 div.tile {
-    height: 40px;
-    line-height: 40px;
-    width: 40px;
-    border: 1px solid black;
+    height: 30px;
+    line-height: 30px;
+    width: 30px;
+    border: 1px solid grey;
     float: left;
-    background-color: bisque;
     display: grid;
     place-items: center;
 }
 
 div.tile:hover {
-    background-color: #ffe4c4b7;
+    background-color: aliceblue !important;
 }
 
 div.uncoveredTile {
@@ -51,4 +92,8 @@ div.uncoveredTile {
 
 div.nextRow {
     clear: left;
+}
+
+footer {
+    text-align: center;
 }
