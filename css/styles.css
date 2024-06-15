@@ -7,7 +7,7 @@ body {
 header {
     height: 40px;
     background-color: grey;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     padding: 5px;
 }
 
@@ -36,13 +36,44 @@ aside {
     border: 3px solid grey;
     padding: 10px;
     background-color: aliceblue;
+    margin: 20px auto 0px auto;
 }
 
 #boardMenu {
     margin: auto;
     display: flex;
     justify-content: center;
-    gap: 5px;
+    gap: 10px;
+}
+
+#customMenu {
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.slider {
+    -webkit-appearance: none;
+    background-color: aliceblue;
+    width: 120px;
+    height: 8px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: grey;
+    cursor: pointer
+  }
+
+p.sliderValue {
+    color: aliceblue;
+    padding-top: 4px;
+    padding-bottom: 0px;
+    margin: 0px;
 }
 
 #boardMenu button {
@@ -65,11 +96,27 @@ aside {
 }
 
 #topOfBoard h1 {
-    margin: 5px 0px;
+    margin-bottom: 10px;
+    margin-top: 0px;
+}
+
+#flags {
+    width: 64px;
 }
 
 #smile {
     cursor: pointer;
+    flex-shrink: 3;
+}
+
+#time {
+    width: 64px;
+    text-align: right;
+}
+
+#tiles {
+    display: block;
+    margin: 0px auto;
 }
 
 div.tile {
@@ -82,18 +129,10 @@ div.tile {
     place-items: center;
 }
 
-div.tile:hover {
-    background-color: aliceblue !important;
-}
-
 div.uncoveredTile {
     cursor: pointer;
 }
 
 div.nextRow {
     clear: left;
-}
-
-footer {
-    text-align: center;
 }

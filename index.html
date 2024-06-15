@@ -1,47 +1,38 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <title>Mine Sweeper</title>
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-
-<body>
-
-    <header>
-        <h1>Minesweeper</h1>
-    </header>
-
-    <div class="container">
-
-        <main> 
-
-            <div id="gameBoard">
-
+    <head>
+        <title>Mine Sweeper</title>
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>Minesweeper</h1>
+        </header>
+        <div class="container">
+            <main> 
                 <div id="boardMenu">
                     <button id="beginner">Beginner</button>
                     <button id="intermediate">Intermediate</button>
                     <button id="expert">Expert</button>
+                    <button id="custom">Custom</button>
                 </div>
-
-                <div id="topOfBoard">
-                    <h1 id="flags">10</h1>
-                    <h1 id="smile">:&#41;</h1>
-                    <h1 id="time">0</h1>
+                <div id="customMenu" style="display: none">
+                    <p class="sliderValue" id="widthSliderValue"></p>
+                    <input type="range" min="3" max="50" class="slider" id="widthSlider">
+                    <input type="range" min="3" max="50" class="slider" id="heightSlider">
+                    <p class="sliderValue" id="heightSliderValue"></p>
                 </div>
-
-                <div id="tiles"></div>
-
-            </div>
-            
-            <script src="script/script.js"></script>
-
-        </main>
-
-    </div>
-
-    <footer>Footer</footer>
-
-</body>
-
+                <div id="gameBoard">
+                    
+                    <div id="topOfBoard">
+                        <h1 id="flags">10</h1>
+                        <h1 id="smile">:&#41;</h1>
+                        <h1 id="time">0</h1>
+                    </div>
+                    <div id="tiles"></div>
+                </div>
+            </main>
+        </div>
+        <script src="scripts/script.js"></script>
+    </body>
 </html>

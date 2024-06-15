@@ -11,8 +11,8 @@ class TileObject {
 }
 
 let tileWidth = 30;
-let height = 8;
-let width = 8;
+let height = 16;
+let width = 16;
 let mines = 10;
 let minesFlagged = 0;
 let tilesUncovered = 0;
@@ -28,6 +28,7 @@ document.getElementById("smile").addEventListener("click", startNewGame);
 document.getElementById("beginner").addEventListener("click", createBeginnerBoard);
 document.getElementById("intermediate").addEventListener("click", createIntermediateBoard);
 document.getElementById("expert").addEventListener("click", createExpertBoard);
+document.getElementById("custom").addEventListener("click", openCusomMenu);
 
 function createBeginnerBoard() {
     width = 8;
@@ -50,9 +51,47 @@ function createExpertBoard() {
     createBoard(width, height);
 }
 
+let customMenu = document.getElementById("customMenu");
+let widthSliderValue = document.getElementById("widthSliderValue");
+let widthSlider = document.getElementById("widthSlider");
+let heightSlider = document.getElementById("heightSlider");
+let heightSliderValue = document.getElementById("heightSliderValue");
+function openCusomMenu() {
+    if (customMenu.style.display == "none") {
+        customMenu.style.display = "flex";
+        widthSlider.value = width;
+        widthSliderValue.innerHTML = width;
+        heightSlider.value = height;
+        heightSliderValue.innerHTML = height;
+    }
+    else {
+        customMenu.style.display = "none";
+    }
+}
+
+widthSlider.oninput = function() {
+    width = parseInt(widthSlider.value);
+    height = parseInt(heightSlider.value);
+    if ((width-1)*height > mines) {
+        heightSliderValue.innerHTML = height;
+        widthSliderValue.innerHTML = width;
+        createBoard(width, height);
+    }
+}
+
+heightSlider.oninput = function() {
+    width = parseInt(widthSlider.value);
+    height = parseInt(heightSlider.value);
+    if (width*height-1 > mines) {
+        widthSliderValue.innerHTML = width;
+        heightSliderValue.innerHTML = height;
+        createBoard(width, height);
+    }
+}
+
 function startNewGame() {
     tileWidth = tileArr[0].offsetWidth + tileArr[0].style.marginLeft + tileArr[0].style.marginRight;
-    document.getElementById("gameBoard").style.width = (width * tileWidth) + "px";
+    document.getElementById("tiles").style.width = (width * tileWidth) + "px";
     document.getElementById("smile").innerHTML = ":)";
     document.getElementById("flags").innerHTML = mines;
     document.getElementById("time").innerHTML = "0";
