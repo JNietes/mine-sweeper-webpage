@@ -51,6 +51,12 @@ aside {
     justify-content: center;
 }
 
+#mineInput {
+    width: 32px;
+    margin: 0px 10px;
+    text-align: center;
+}
+
 .slider {
     -webkit-appearance: none;
     background-color: aliceblue;

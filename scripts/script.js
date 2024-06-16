@@ -9,8 +9,6 @@ class TileObject {
         this.adjMines = adjMines;
     }
 }
-
-let differentBoard = false;
 let tileWidth = 30;
 let height = 16;
 let width = 16;
@@ -22,6 +20,11 @@ let minSet = new Set();
 let tileMap = new Map(); // {div.tile#id: TileObject}
 let tileArr = Array.from(document.querySelectorAll(".tile"));
 let adjDeltas = [-width-1, -1, width-1, width, -width, -width+1, +1, width+1];
+let customMenu = document.getElementById("customMenu");
+let widthSliderValue = document.getElementById("widthSliderValue");
+let widthSlider = document.getElementById("widthSlider");
+let heightSlider = document.getElementById("heightSlider");
+let heightSliderValue = document.getElementById("heightSliderValue");
 
 createBoard(width, height);
 startGame();
@@ -31,6 +34,8 @@ document.getElementById("beginner").addEventListener("click", createBeginnerBoar
 document.getElementById("intermediate").addEventListener("click", createIntermediateBoard);
 document.getElementById("expert").addEventListener("click", createExpertBoard);
 document.getElementById("custom").addEventListener("click", toggleCustomMenu);
+document.getElementById("newGame").addEventListener("click", createCustomGame);
+
 
 function createBeginnerBoard() {
     width = 8;
@@ -56,30 +61,26 @@ function createExpertBoard() {
     startGame();
 }
 
-let customMenu = document.getElementById("customMenu");
-let widthSliderValue = document.getElementById("widthSliderValue");
-let widthSlider = document.getElementById("widthSlider");
-let heightSlider = document.getElementById("heightSlider");
-let heightSliderValue = document.getElementById("heightSliderValue");
+function createCustomGame() {
+    width = parseInt(widthSlider.value);
+    height = heightSlider.value;
+    if (document.getElementById("mineInput").value < height*width && document.getElementById("mineInput").value > 0) {
+        mines = parseInt(document.getElementById("mineInput").value);
+    }
+    createBoard(width, height);
+    startGame();
+}
 
 function toggleCustomMenu() {
     if (customMenu.style.display == "none") {
-        pauseGame();
         customMenu.style.display = "flex";
         widthSlider.value = width;
         widthSliderValue.innerHTML = width;
         heightSlider.value = height;
         heightSliderValue.innerHTML = height;
     }
-    else if (differentBoard) {
-        customMenu.style.display = "none";
-        resumeGame();
-        startGame();
-        differentBoard = false;
-    }
     else {
         customMenu.style.display = "none";
-        resumeGame();
     }
 }
 
@@ -90,9 +91,8 @@ widthSlider.oninput = function() {
         heightSliderValue.innerHTML = height;
         widthSliderValue.innerHTML = width;
         createBoard(width, height);
-    }
-    differentBoard = true;
-}
+        startGame();
+    }}
 
 heightSlider.oninput = function() {
     width = parseInt(widthSlider.value);
@@ -101,34 +101,17 @@ heightSlider.oninput = function() {
         widthSliderValue.innerHTML = width;
         heightSliderValue.innerHTML = height;
         createBoard(width, height);
-    }
-    differentBoard = true;
-}
-
-function pauseGame() {
-    for (let i=0; i<tileArr.length; i++) {
-        tileArr[i].removeEventListener("click", selectedDiv);
-        tileArr[i].removeEventListener("contextmenu", placeFlag);
-    } 
-    document.getElementById("smile").removeEventListener("click", startGame);
-    document.getElementById("smile").style.cursor = "default";
-}
-
-function resumeGame() {
-    for (let i=0; i<tileArr.length; i++) {
-        tileArr[i].addEventListener("click", selectedDiv);
-        tileArr[i].addEventListener("contextmenu", placeFlag);
-    } 
-    document.getElementById("smile").addEventListener("click", startGame);
-    document.getElementById("smile").style.cursor = "pointer";
-}
+        startGame();
+    }}
 
 function resetBoard() {
     tileWidth = tileArr[0].offsetWidth + tileArr[0].style.marginLeft + tileArr[0].style.marginRight;
     document.getElementById("tiles").style.width = (width * tileWidth) + "px";
     document.getElementById("smile").innerHTML = ":)";
+    document.getElementById("mineInput").value = mines;
     document.getElementById("flags").innerHTML = mines;
     document.getElementById("time").innerHTML = "0";
+
     mineSet = newMineIndexes();
     clearInterval(timer);
     tilesUncovered = 0
@@ -293,7 +276,6 @@ function placeFlag() {
         tile.appendChild(img);
         tileMap.get(tile).flag = true;
         tileMap.get(tile).covered = false;
-        tile.classList.remove("uncoveredTile");
         document.getElementById("flags").innerHTML--;
         if (tileMap.get(tile).mine == true) {
             minesFlagged++;
@@ -303,7 +285,6 @@ function placeFlag() {
         tile.removeChild(tile.firstChild);
         tileMap.get(tile).flag = false;
         tileMap.get(tile).covered = true;
-        tile.classList.add("uncoveredTile");
         document.getElementById("flags").innerHTML++;
         if (tileMap.get(tile).mine == true) {
             minesFlagged--;
