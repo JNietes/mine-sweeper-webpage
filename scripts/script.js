@@ -10,10 +10,11 @@ class TileObject {
     }
 }
 
+let differentBoard = false;
 let tileWidth = 30;
 let height = 16;
 let width = 16;
-let mines = 10;
+let mines = 40;
 let minesFlagged = 0;
 let tilesUncovered = 0;
 let timer = setInterval(countTime, 1000);
@@ -23,18 +24,20 @@ let tileArr = Array.from(document.querySelectorAll(".tile"));
 let adjDeltas = [-width-1, -1, width-1, width, -width, -width+1, +1, width+1];
 
 createBoard(width, height);
+startGame();
 
-document.getElementById("smile").addEventListener("click", startNewGame);
+document.getElementById("smile").addEventListener("click", startGame);
 document.getElementById("beginner").addEventListener("click", createBeginnerBoard);
 document.getElementById("intermediate").addEventListener("click", createIntermediateBoard);
 document.getElementById("expert").addEventListener("click", createExpertBoard);
-document.getElementById("custom").addEventListener("click", openCusomMenu);
+document.getElementById("custom").addEventListener("click", toggleCustomMenu);
 
 function createBeginnerBoard() {
     width = 8;
     height = 8;
     mines = 10;
     createBoard(width, height);
+    startGame();
 }
 
 function createIntermediateBoard() {
@@ -42,6 +45,7 @@ function createIntermediateBoard() {
     height = 16;
     mines = 40;
     createBoard(width, height);
+    startGame();
 }
 
 function createExpertBoard() {
@@ -49,6 +53,7 @@ function createExpertBoard() {
     height = 16;
     mines = 99;
     createBoard(width, height);
+    startGame();
 }
 
 let customMenu = document.getElementById("customMenu");
@@ -56,16 +61,25 @@ let widthSliderValue = document.getElementById("widthSliderValue");
 let widthSlider = document.getElementById("widthSlider");
 let heightSlider = document.getElementById("heightSlider");
 let heightSliderValue = document.getElementById("heightSliderValue");
-function openCusomMenu() {
+
+function toggleCustomMenu() {
     if (customMenu.style.display == "none") {
+        pauseGame();
         customMenu.style.display = "flex";
         widthSlider.value = width;
         widthSliderValue.innerHTML = width;
         heightSlider.value = height;
         heightSliderValue.innerHTML = height;
     }
+    else if (differentBoard) {
+        customMenu.style.display = "none";
+        resumeGame();
+        startGame();
+        differentBoard = false;
+    }
     else {
         customMenu.style.display = "none";
+        resumeGame();
     }
 }
 
@@ -77,6 +91,7 @@ widthSlider.oninput = function() {
         widthSliderValue.innerHTML = width;
         createBoard(width, height);
     }
+    differentBoard = true;
 }
 
 heightSlider.oninput = function() {
@@ -87,9 +102,28 @@ heightSlider.oninput = function() {
         heightSliderValue.innerHTML = height;
         createBoard(width, height);
     }
+    differentBoard = true;
 }
 
-function startNewGame() {
+function pauseGame() {
+    for (let i=0; i<tileArr.length; i++) {
+        tileArr[i].removeEventListener("click", selectedDiv);
+        tileArr[i].removeEventListener("contextmenu", placeFlag);
+    } 
+    document.getElementById("smile").removeEventListener("click", startGame);
+    document.getElementById("smile").style.cursor = "default";
+}
+
+function resumeGame() {
+    for (let i=0; i<tileArr.length; i++) {
+        tileArr[i].addEventListener("click", selectedDiv);
+        tileArr[i].addEventListener("contextmenu", placeFlag);
+    } 
+    document.getElementById("smile").addEventListener("click", startGame);
+    document.getElementById("smile").style.cursor = "pointer";
+}
+
+function resetBoard() {
     tileWidth = tileArr[0].offsetWidth + tileArr[0].style.marginLeft + tileArr[0].style.marginRight;
     document.getElementById("tiles").style.width = (width * tileWidth) + "px";
     document.getElementById("smile").innerHTML = ":)";
@@ -99,12 +133,15 @@ function startNewGame() {
     clearInterval(timer);
     tilesUncovered = 0
     minesFlagged = 0;
+}
+
+function startGame() {
+    resetBoard();
     for (let i=0; i < tileArr.length; i++) {
         tileMap.set(tileArr[i], new TileObject(tileArr[i].id, false, false, i, true, 0));
         tileArr[i].addEventListener("click", selectedDiv);
         tileArr[i].addEventListener("contextmenu", placeFlag);
         tileArr[i].addEventListener("contextmenu", (e) => {e.preventDefault()});
-        tileArr[i].style.backgroundColor = "bisque";
         tileArr[i].classList.add("uncoveredTile");
         tileArr[i].innerHTML = null;
     }
@@ -120,6 +157,7 @@ function createBoard(width, height) {
         for (let i=0; i<width; i++) {
             let div = document.createElement("div");
             div.classList.add("tile");
+            div.classList.add("uncoveredTile");
             document.getElementById("tiles").appendChild(div);
         }
         let nextRow = document.createElement("div");
@@ -129,7 +167,7 @@ function createBoard(width, height) {
     tileArr = Array.from(document.querySelectorAll(".tile"));
     tileMap = new Map(); // {div.tile#id: TileObject}
     adjDeltas = [-width-1, -1, width-1, width, -width, -width+1, +1, width+1];
-    startNewGame();
+    resetBoard();
 }
 
 function inArray(index, arr) {

@@ -131,6 +131,7 @@ div.tile {
 
 div.uncoveredTile {
     cursor: pointer;
+    background-color: bisque !important;
 }
 
 div.nextRow {
