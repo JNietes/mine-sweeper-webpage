@@ -143,3 +143,40 @@ div.uncoveredTile {
 div.nextRow {
     clear: left;
 }
+
+#webStorage {
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    border: 3px solid grey;
+    padding: 2px;
+    background-color: aliceblue;
+    font-weight: bold;
+    margin: 5px auto;
+}
+
+#webStorage button {
+    float: left;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    color: aliceblue;
+    border: none;
+    background-color: grey;
+    margin: auto 5px;
+}
+
+#webStorage button:hover {
+    background-color: aliceblue;
+    color: grey;
+}
+
+#storedValues p {
+    margin: 0px 0px;
+    float: left;
+}
+
+table, th, td {
+    border: 1px solid grey;
+    background-color: aliceblue;
+    margin: 5px auto;
+}

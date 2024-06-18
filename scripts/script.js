@@ -9,12 +9,14 @@ class TileObject {
         this.adjMines = adjMines;
     }
 }
+
 let tileWidth = 30;
 let height = 16;
 let width = 16;
 let mines = 40;
 let minesFlagged = 0;
 let tilesUncovered = 0;
+let currentDifficulty = "Intermediate";
 let timer = setInterval(countTime, 1000);
 let minSet = new Set();
 let tileMap = new Map(); // {div.tile#id: TileObject}
@@ -35,7 +37,23 @@ document.getElementById("intermediate").addEventListener("click", createIntermed
 document.getElementById("expert").addEventListener("click", createExpertBoard);
 document.getElementById("custom").addEventListener("click", toggleCustomMenu);
 document.getElementById("newGame").addEventListener("click", createCustomGame);
+document.getElementById("resetStoredValues").addEventListener("click", resetStoredValues);
 
+function resetStoredValues() {
+    localStorage.setItem("gamesStarted", "0");
+    document.getElementById("gamesStarted").innerHTML = "0";
+    localStorage.setItem("gamesLost", "0");
+    document.getElementById("gamesLost").innerHTML = "0";
+    localStorage.setItem("gamesWon", "0");
+    document.getElementById("gamesWon").innerHTML = "0";
+}
+
+function incrimentStoredValue(key) {
+    let temp = localStorage.getItem(key);
+    temp++;
+    localStorage.setItem(key, temp);
+    document.getElementById(key).innerHTML = temp;
+}
 
 function createBeginnerBoard() {
     width = 8;
@@ -119,6 +137,9 @@ function resetBoard() {
 }
 
 function startGame() {
+    document.getElementById("gamesStarted").innerHTML = localStorage.getItem("gamesStarted");
+    document.getElementById("gamesLost").innerHTML = localStorage.getItem("gamesLost");
+    document.getElementById("gamesWon").innerHTML = localStorage.getItem("gamesWon");
     resetBoard();
     for (let i=0; i < tileArr.length; i++) {
         tileMap.set(tileArr[i], new TileObject(tileArr[i].id, false, false, i, true, 0));
@@ -211,6 +232,7 @@ function uncoverTile(tile) {
         }
         createClues(mineSet);
         timer = setInterval(countTime, 1000);
+        incrimentStoredValue("gamesStarted");
     }
     if (tileMap.get(tile).covered == true) { 
         tilesUncovered++; 
@@ -218,6 +240,7 @@ function uncoverTile(tile) {
         tile.style.backgroundColor = "floralwhite";
         tileMap.get(tile).covered = false;
         if (tileMap.get(tile).mine == true) { // Game Over
+            incrimentStoredValue("gamesLost");
             tilesUncovered+=1024; // Prevents winscreen when a mine is clicked when tilesUncovered=totalTile-mines-1
             tileMap.get(tile).covered = false;
             clearInterval(timer);
@@ -296,6 +319,7 @@ function placeFlag() {
 }
 
 function displayWinScreen() {
+    incrimentStoredValue("gamesWon");
     document.getElementById("smile").innerHTML = ":D";
     clearInterval(timer);
     for (let i=0; i<tileArr.length; i++) {
