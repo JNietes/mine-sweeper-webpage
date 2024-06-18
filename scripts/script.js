@@ -10,6 +10,7 @@ class TileObject {
     }
 }
 
+let gameWon = false;
 let tileWidth = 30;
 let height = 16;
 let width = 16;
@@ -129,11 +130,11 @@ function resetBoard() {
     document.getElementById("mineInput").value = mines;
     document.getElementById("flags").innerHTML = mines;
     document.getElementById("time").innerHTML = "0";
-
     mineSet = newMineIndexes();
     clearInterval(timer);
     tilesUncovered = 0
     minesFlagged = 0;
+    gameWon = false;
 }
 
 function startGame() {
@@ -267,7 +268,8 @@ function uncoverTile(tile) {
         else {
             addPicture(tile);
         }
-        if (tilesUncovered == (height*width)-mines) {
+        if (tilesUncovered == (height*width)-mines && gameWon == false) {
+            gameWon = true; // Prevents callstack from executing this code
             displayWinScreen();
         }
     }
