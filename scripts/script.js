@@ -28,9 +28,11 @@ let widthSliderValue = document.getElementById("widthSliderValue");
 let widthSlider = document.getElementById("widthSlider");
 let heightSlider = document.getElementById("heightSlider");
 let heightSliderValue = document.getElementById("heightSliderValue");
+const storedValueIds = ["gamesStarted", "gamesLost", "gamesWon"];
 
 createBoard(width, height);
 startGame();
+updateLeaderboard();
 
 document.getElementById("smile").addEventListener("click", startGame);
 document.getElementById("beginner").addEventListener("click", createBeginnerBoard);
@@ -41,12 +43,37 @@ document.getElementById("newGame").addEventListener("click", createCustomGame);
 document.getElementById("resetStoredValues").addEventListener("click", resetStoredValues);
 
 function resetStoredValues() {
-    localStorage.setItem("gamesStarted", "0");
-    document.getElementById("gamesStarted").innerHTML = "0";
-    localStorage.setItem("gamesLost", "0");
-    document.getElementById("gamesLost").innerHTML = "0";
-    localStorage.setItem("gamesWon", "0");
-    document.getElementById("gamesWon").innerHTML = "0";
+    for (let i=0; i<storedValueIds.length; i++) {
+        document.getElementById(storedValueIds[i]).innerHTML = "0";
+    }
+    for (let i=1; i<=parseInt(localStorage.getItem("gamesStarted")); i++) {
+        if (localStorage.getItem("game" + i) != null) {
+            document.getElementById("game" + i).remove();
+        }
+    }
+    localStorage.clear();
+}
+
+function updateLeaderboard() {
+    for (let i=1; i<=parseInt(localStorage.getItem("gamesStarted")); i++) {
+        if (localStorage.getItem("game" + i) != null && document.getElementById("game" + i) == null) {
+            let rowOfStats = document.createElement("tr");
+            rowOfStats.id = "game" + i;
+
+            let game = document.createElement("td");
+            let difficulty = document.createElement("td")
+            let time = document.createElement("td")
+
+            game.innerHTML = localStorage.getItem("game" + i);
+            difficulty.innerHTML = localStorage.getItem("difficulty" + i);
+            time.innerHTML = localStorage.getItem("time" + i);
+
+            rowOfStats.appendChild(game);
+            rowOfStats.appendChild(difficulty);
+            rowOfStats.appendChild(time);
+            document.getElementById("wonGameStats").appendChild(rowOfStats);
+        }
+    }
 }
 
 function incrimentStoredValue(key) {
@@ -57,6 +84,7 @@ function incrimentStoredValue(key) {
 }
 
 function createBeginnerBoard() {
+    currentDifficulty = "Beginner";
     width = 8;
     height = 8;
     mines = 10;
@@ -65,6 +93,7 @@ function createBeginnerBoard() {
 }
 
 function createIntermediateBoard() {
+    currentDifficulty = "Intermediate";
     width = 16;
     height = 16;
     mines = 40;
@@ -73,6 +102,7 @@ function createIntermediateBoard() {
 }
 
 function createExpertBoard() {
+    currentDifficulty = "Expert";
     width = 32;
     height = 16;
     mines = 99;
@@ -81,6 +111,7 @@ function createExpertBoard() {
 }
 
 function createCustomGame() {
+    currentDifficulty = "Custom";
     width = parseInt(widthSlider.value);
     height = heightSlider.value;
     if (document.getElementById("mineInput").value < height*width && document.getElementById("mineInput").value > 0) {
@@ -138,9 +169,15 @@ function resetBoard() {
 }
 
 function startGame() {
-    document.getElementById("gamesStarted").innerHTML = localStorage.getItem("gamesStarted");
-    document.getElementById("gamesLost").innerHTML = localStorage.getItem("gamesLost");
-    document.getElementById("gamesWon").innerHTML = localStorage.getItem("gamesWon");
+    if (localStorage.getItem("gamesStarted") != null) {
+        document.getElementById("gamesStarted").innerHTML = localStorage.getItem("gamesStarted");
+    }
+    if (localStorage.getItem("gamesLost") != null) {
+        document.getElementById("gamesLost").innerHTML = localStorage.getItem("gamesLost");
+    }
+    if (localStorage.getItem("gamesWon") != null) {
+        document.getElementById("gamesWon").innerHTML = localStorage.getItem("gamesWon");
+    }
     resetBoard();
     for (let i=0; i < tileArr.length; i++) {
         tileMap.set(tileArr[i], new TileObject(tileArr[i].id, false, false, i, true, 0));
@@ -328,6 +365,11 @@ function displayWinScreen() {
         tileArr[i].removeEventListener("click", selectedDiv);
         tileArr[i].removeEventListener("contextmenu", placeFlag);
     } 
+    let gameNumber = document.getElementById("gamesStarted").innerHTML;
+    localStorage.setItem("game" + gameNumber, gameNumber);
+    localStorage.setItem("difficulty" + gameNumber, currentDifficulty);
+    localStorage.setItem("time" + gameNumber, document.getElementById("time").innerHTML);
+    updateLeaderboard();
 }
 
 function addPicture(tile) {

@@ -33,20 +33,28 @@
                     </div>
                     <div id="tiles"></div>
                 </div>
-                <div id="webStorage">
-                    <button id="resetStoredValues">Reset Stats</button>
-                    <div id="storedValues">
-                        <p>Games Started:</p>
-                        <p id="gamesStarted"></p>
-                        <p>&nbsp;&nbsp;</p>
-                        <p>Games Lost:</p>
-                        <p id="gamesLost"></p>
-                        <p>&nbsp;&nbsp;</p>
-                        <p>Games Won:</p>
-                        <p id="gamesWon"></p>
+                <div id="stats">
+                    <div id="overallStats">
+                        <button id="resetStoredValues">Reset Stats</button>
+                        <div id="statValues">
+                            <p>Games Started:</p>
+                            <p id="gamesStarted">0</p>
+                            <p>&nbsp;&nbsp;</p>
+                            <p>Games Lost:</p>
+                            <p id="gamesLost">0</p>
+                            <p>&nbsp;&nbsp;</p>
+                            <p>Games Won:</p>
+                            <p id="gamesWon">0</p>
+                        </div>
                     </div>
+                    <table id="wonGameStats">
+                        <tr>
+                            <th>Game #</th>
+                            <th>Difficulty</th>
+                            <th>Time</th>
+                        </tr>
+                    </table>
                 </div>
-                
             </main>
         </div>
         <script src="scripts/script.js"></script>

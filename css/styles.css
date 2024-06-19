@@ -144,7 +144,12 @@ div.nextRow {
     clear: left;
 }
 
-#webStorage {
+#stats {
+    width: fit-content;
+    margin: 5px auto;
+}
+
+#overallStats {
     display: flex;
     justify-content: center;
     width: fit-content;
@@ -152,10 +157,10 @@ div.nextRow {
     padding: 2px;
     background-color: aliceblue;
     font-weight: bold;
-    margin: 5px auto;
+    margin: 20px auto;
 }
 
-#webStorage button {
+#overallStats button {
     float: left;
     transition-duration: 0.4s;
     cursor: pointer;
@@ -165,18 +170,26 @@ div.nextRow {
     margin: auto 5px;
 }
 
-#webStorage button:hover {
+#overallStats button:hover {
     background-color: aliceblue;
     color: grey;
 }
 
-#storedValues p {
-    margin: 0px 0px;
+#statValues p {
     float: left;
+    margin: 0px 0px;
 }
 
-table, th, td {
-    border: 1px solid grey;
+#wonGameStats {
+    border: solid 2px grey;
+    border-spacing: 0px;
+    width: 100%;
+    margin: 0px auto 20px auto;
+}
+
+#wonGameStats table, th, td {
+    border: solid 1px grey;
     background-color: aliceblue;
-    margin: 5px auto;
+    padding: 1px;
+    text-align: center;
 }
